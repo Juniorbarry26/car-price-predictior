@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-dark text-white text-center">
-                    <h4>🚗 Car Price Predictor</h4>
+                    <h4>Car Price Predictor</h4>
                 </div>
 
                 <div class="card-body">
@@ -118,15 +118,15 @@
         .then(res => res.text())
         .then(result => {
             if (result.startsWith("Prediction error")) {
-                document.getElementById("prediction").innerHTML = "❌ " + result;
+                document.getElementById("prediction").innerHTML = " " + result;
             } else {
                 document.getElementById("prediction").innerHTML =
-                    "💰 Estimated Price: $ " + result;
+                    "Estimated Price: $ " + result;
             }
         })
         .catch(() => {
             document.getElementById("prediction").innerHTML =
-                "❌ Prediction failed";
+                "Prediction failed";
         });
     }
 </script>
