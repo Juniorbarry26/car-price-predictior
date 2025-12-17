@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Predictor</title>
+
+    <!-- Fonts & CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4>🚗 Car Price Predictor</h4>
+                </div>
+
+                <div class="card-body">
+                    <form id="predictForm">
+
+                        <!-- Company -->
+                        <div class="form-group">
+                            <label>Company</label>
+                            <select class="form-control" name="company"
+                                    onchange="load_car_models(this.value)" required>
+                                <option value="">Select company</option>
+                                {% for company in companies %}
+                                    <option value="{{ company }}">{{ company }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Model -->
+                        <div class="form-group">
+                            <label>Car Model</label>
+                            <select class="form-control" id="car_models" name="car_models" required>
+                                <option value="">Select model</option>
+                            </select>
+                        </div>
+
+                        <!-- Year -->
+                        <div class="form-group">
+                            <label>Year of Purchase</label>
+                            <select class="form-control" name="year" required>
+                                <option value="">Select year</option>
+                                {% for year in years %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Fuel -->
+                        <div class="form-group">
+                            <label>Fuel Type</label>
+                            <select class="form-control" name="fuel_type" required>
+                                <option value="">Select fuel</option>
+                                {% for fuel in fuel_types %}
+                                    <option value="{{ fuel }}">{{ fuel }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- KM Driven -->
+                        <div class="form-group">
+                            <label>Kilometres Driven</label>
+                            <input type="number" class="form-control" name="kilo_driven"
+                                   min="0" required>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block"
+                                onclick="send_data()">
+                            Predict Price
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <h5 id="prediction"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const carModels = {{ car_models | tojson }};
+
+    function load_car_models(company) {
+        const modelSelect = document.getElementById("car_models");
+        modelSelect.innerHTML = "<option value=''>Select model</option>";
+
+        carModels.forEach(model => {
+            if (model.toLowerCase().includes(company.toLowerCase())) {
+                const option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            }
+        });
+    }
+
+    function send_data() {
+        const form = document.getElementById("predictForm");
+        const formData = new FormData(form);
+
+        document.getElementById("prediction").innerHTML =
+            "⏳ Predicting...";
+
+        fetch("/predict", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.text())
+        .then(result => {
+            if (result.startsWith("Prediction error")) {
+                document.getElementById("prediction").innerHTML = "❌ " + result;
+            } else {
+                document.getElementById("prediction").innerHTML =
+                    "💰 Estimated Price: $ " + result;
+            }
+        })
+        .catch(() => {
+            document.getElementById("prediction").innerHTML =
+                "❌ Prediction failed";
+        });
+    }
+</script>
+
+</body>
+</html>
