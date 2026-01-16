@@ -73,8 +73,10 @@ car-price-predictior/
 │── requirements.txt      # Project dependencies
 │── README.md             # Project documentation
 ```
-- git clone https://github.com/Juniorbarry26/car-price-predictior.git
+```bash
+git clone https://github.com/Juniorbarry26/car-price-predictior.git
 cd car-price-predictior
+```
 
 - pip install -r requirements.txt
 
